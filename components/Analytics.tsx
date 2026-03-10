@@ -1,4 +1,3 @@
-
 import React, { useMemo, useEffect, useRef, useState } from 'react';
 import { 
   TrendingUp, Users, ClipboardList, Wallet, 
@@ -145,6 +144,7 @@ const Analytics: React.FC<AnalyticsProps> = ({
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false, // Prevents height resizing errors
           plugins: { legend: { display: false } },
           scales: { 
               y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
@@ -165,6 +165,7 @@ const Analytics: React.FC<AnalyticsProps> = ({
         },
         options: {
           cutout: '80%',
+          maintainAspectRatio: false,
           plugins: { legend: { display: false } }
         }
       });
@@ -190,6 +191,7 @@ const Analytics: React.FC<AnalyticsProps> = ({
           options: {
             indexAxis: 'y',
             responsive: true,
+            maintainAspectRatio: false, // Prevents height resizing errors
             plugins: { legend: { display: false } },
             scales: { x: { beginAtZero: true } }
           }
@@ -239,10 +241,14 @@ const Analytics: React.FC<AnalyticsProps> = ({
             <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
                 <TrendingUp className="text-blue-600" size={18}/> 6-Month Trajectory
             </h3>
-            <canvas ref={chartRef1} className="max-h-[300px]"></canvas>
+            {/* Added relative positioned wrapper with fixed height */}
+            <div className="relative w-full h-[300px]">
+              <canvas ref={chartRef1}></canvas>
+            </div>
          </div>
 
          <div className="bg-white p-10 rounded-[3.5rem] border border-slate-200 shadow-sm flex flex-col items-center justify-center text-center space-y-6">
+            {/* Maintained relative w-48 h-48 wrapper for doughnut chart */}
             <div className="relative w-48 h-48">
                 <canvas ref={chartRef2}></canvas>
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
@@ -261,14 +267,18 @@ const Analytics: React.FC<AnalyticsProps> = ({
           <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
               <BarChart3 className="text-indigo-600" size={18}/> Route Volume (L)
           </h3>
-          <canvas ref={chartRef3} className="max-h-[300px]"></canvas>
+          {/* Added relative positioned wrapper with fixed height */}
+          <div className="relative w-full h-[300px]">
+            <canvas ref={chartRef3}></canvas>
+          </div>
       </div>
     </div>
   );
 };
 
 const KpiCard = ({ title, value, change, color, icon }: { title: string; value: string; change?: number; color: string; icon: React.ReactNode }) => {
-    const isPositive = change > 0;
+    // Fixed potential issue if change is undefined
+    const isPositive = change !== undefined && change > 0;
     return (
         <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col gap-4">
             <div className="flex justify-between items-center">

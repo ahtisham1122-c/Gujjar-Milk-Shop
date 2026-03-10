@@ -55,9 +55,7 @@ const App: React.FC = () => {
   const [syncConflict, setSyncConflict] = useState(false);
   const [integrityStatus, setIntegrityStatus] = useState<'verified' | 'syncing' | 'conflict'>('verified');
 
-  // Refs to avoid stale closures in sync logic
-  const customersRef = useRef<Customer[]>(customers);
-  useEffect(() => { customersRef.current = customers; }, [customers]);
+ 
   
   // Auth & Global Filter
   const [currentUser, setCurrentUser] = useState<{role: UserRole, id?: string} | null>(null);
@@ -78,6 +76,10 @@ const App: React.FC = () => {
   const [archives, setArchives] = useState<MonthlyArchive[]>(() => getStoredData('archives', []));
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(() => getStoredData('auditLogs', []));
 
+
+ // Refs to avoid stale closures in sync logic
+  const customersRef = useRef<Customer[]>(customers);
+  useEffect(() => { customersRef.current = customers; }, [customers]);
   const deliveriesByCustomer = useMemo(() => {
     const map: Record<string, Delivery[]> = {};
     deliveries.forEach(d => {

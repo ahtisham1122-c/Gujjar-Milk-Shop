@@ -1,4 +1,3 @@
-
 import { supabase } from './supabaseClient';
 
 /**
@@ -42,8 +41,9 @@ export const relationalDataService = {
     while (hasMore) {
       let query = supabase.from(tableName).select('*');
       
+      // ✅ FIX: Changed 'revision' to 'version' to match the database schema
       if (sinceRevision > 0) {
-        query = query.gt('revision', sinceRevision);
+        query = query.gt('version', sinceRevision);
       }
 
       if (dateLimit && tableName === 'dp_deliveries') {
@@ -107,7 +107,6 @@ export const relationalDataService = {
         payload[key] = data.map((arc: any) => {
           if (arc.payload) {
             const { payload: arcPayload, ...rest } = arc;
-            // Ensure payload is an object before spreading
             const unpackedPayload = typeof arcPayload === 'string' ? JSON.parse(arcPayload) : arcPayload;
             return { ...rest, ...unpackedPayload };
           }
@@ -199,7 +198,6 @@ export const relationalDataService = {
       return this.toSnakeCase(item);
     });
 
-    // Batch upserts
     const batchSize = 500;
     for (let i = 0; i < mappedData.length; i += batchSize) {
       const batch = mappedData.slice(i, i + batchSize);
@@ -213,7 +211,6 @@ export const relationalDataService = {
 
   /**
    * Full state sync (Relational version)
-   * Instead of one big JSON, we sync each collection.
    */
   async syncAll(state: any) {
     const keys = [
